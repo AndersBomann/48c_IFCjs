@@ -11,6 +11,7 @@
 
 :root {
   --dark-mode-background-color: #3f3f3f;
+  --dark-mode-sidemenu-background: #2d2c2e;
   --btn-color: rgb(100, 61, 136);
   --glow-color: rgb(217, 176, 255);
   --glow-transparent-color: rgba(217, 176, 255, 0.15);
@@ -31,7 +32,53 @@ body {
   height: 100%;
   width: 100%;
 }
+.ifc-tree-menu {
+  position: absolute;
+  background-color: var(--dark-mode-sidemenu-background);
+  position: relative;
+  display: inline-block;
+  margin: 1.5em 2em;
+  padding-bottom: 2px;
+}
 
+li ul {
+  user-select: none;
+  cursor: pointer;
+}
+
+ul, #myUL {
+  list-style-type: none;
+}
+
+#myUL {
+  margin: 0.5rem;
+  padding: 0;
+}
+
+.caret {
+  cursor: pointer;
+  user-select: none; 
+}
+
+.caret::before {
+  content: '🎮';
+  color: var(--second-glow-color);
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.caret-down::before {
+  transform: rotate(90deg);
+}
+
+.nested {
+  display: none;
+}
+
+.active {
+  display: block;
+  margin-left: 10px;
+}
 #three-canvas {
   position: fixed;
   top: 0;
@@ -41,21 +88,28 @@ body {
   justify-content: center;
   display: flex;
 }
+.left-menu{
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  padding-bottom: 2px;
+}
 
 input {
   z-index: 1;
   width: 80%;
-  position: absolute;
+  /* position: absolute; */
+  display: block;
   border: 0.25em solid var(--glow-color);
   border-radius: 1em;
   padding: 0.5em 1em;
-  margin: 0.5em 1em;
+  margin: 1.5em 2em;
   color: var(--glow-color);
   font-size: 1rem;
   background-color: var(--btn-color);
   outline: none;
   box-shadow: 0 0 1em 0.25em var(--glow-color),
-    0 0 4em 1em var(--glow-spread-color),
+    0 0 0.7em 0.1em var(--glow-spread-color),
     inset 0 0 0.75em 0.25em var(--glow-color);
   text-shadow: 0 0 0.5em var(--glow-color);
   transition: all 0.3s;
@@ -83,7 +137,7 @@ input:hover {
   color: var(--enhanced-glow-color);
   background-color: var(--glow-color);
   box-shadow: 0 0 1em .25em var(--glow-color),
-    0 0 4em 2em var(--glow-spread-color),
+  0 0 0.7em 0.1em var(--glow-spread-color),
     inset 0 0 .75em .25em var(--glow-color);
 }
 
@@ -187,21 +241,20 @@ circle {
   }
 }
 
-/* The sidebar menu */
+
 .sidebar {
-  height: 100%; /* 100% Full-height */
-  width: 0; /* 0 width - change this with JavaScript */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Stay on top */
+  height: 100%; 
+  width: 0; 
+  position: fixed; 
+  z-index: 1; 
   top: 0;
   left: 0;
-  background-color: #111; /* Black*/
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 60px; /* Place content 60px from the top */
-  transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+  background-color: var(--dark-mode-sidemenu-background);
+  overflow-x: hidden; 
+  padding-top: 60px; 
+  transition: 0.5s; 
 }
 
-/* The sidebar links */
 .sidebar a {
   padding: 8px 8px 8px 32px;
   text-decoration: none;
