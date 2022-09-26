@@ -49,7 +49,10 @@ input.addEventListener(
 async function loadIfc(url) {
   const model = await viewer.IFC.loadIfcUrl(url);
   await viewer.shadowDropper.renderShadow(model.modelID);
-}
+
+  const spatialTree = await viewer.IFC.getSpatialStructure(model.modelID);
+  console.log(spatialTree);
+};
 
 const selectMaterial = new MeshLambertMaterial({
   transparent: true,
