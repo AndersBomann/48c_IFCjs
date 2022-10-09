@@ -16,11 +16,11 @@
     <div id="mySidebar" class="sidebar">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
       <a>Menu</a>
+      <input type="file" id="file-input">
       <div class="left-menu">
-        <input type="file" id="file-input">
         <div class="ifc-tree-menu">
           <ul id="myUL">
-            <li id="tree-root">
+            <li id="tree-root" class="hidden">
               <span class="caret">Beverages</span>
               <ul class="nested">
                 <li>Water</li>
@@ -66,7 +66,7 @@
   </div>
   <script src="bundle.js"></script>
 
-  <script>
+  <!-- <script>
     function openNav() {
       document.getElementById("mySidebar").style.width = "30%";
       document.getElementById("main").style.marginLeft = "250px";
@@ -77,8 +77,8 @@
       document.getElementById("mySidebar").style.width = "0";
       document.getElementById("main").style.marginLeft = "0";
       document.getElementById("main").classList.remove("hidden");
-    }
-  </script>
+    } -->
+  <!-- </script> -->
 </body>
 
 </html>

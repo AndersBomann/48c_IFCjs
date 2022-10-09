@@ -32,6 +32,7 @@ viewer.axes.setAxes();
 const controls = viewer.context.ifcCamera.cameraControls;
 controls.setLookAt(35, 55, 55, 0, 0, -20, false);
 
+const treeRoot = document.getElementById("tree-root");
 const loading = document.getElementById("loader-container");
 const input = document.getElementById("file-input");
 input.addEventListener(
@@ -41,10 +42,30 @@ input.addEventListener(
     const ifcURL = URL.createObjectURL(changed.target.files[0]);
     const model = await loadIfc(ifcURL);
     loading.classList.add("hidden");
+    treeRoot.classList.remove("hidden");
     // scene.add(model);
   },
   false
 );
+const openButton = document.getElementsByClassName("openbtn")
+const closeButton = document.getElementsByClassName("clsoebtn")
+
+openButton.onclick = openNav();
+closeButton.onclick = closeNav();
+
+function openNav() {
+  document.getElementById("mySidebar").style.width = "30%";
+  document.getElementById("main").style.marginLeft = "250px";
+  document.getElementById("main").classList.add("hidden");
+}
+
+function closeNav() {
+  document.getElementById("mySidebar").style.width = "0";
+  document.getElementById("main").style.marginLeft = "0";
+  document.getElementById("main").classList.remove("hidden");
+}
+
+
 
 async function loadIfc(url) {
   const model = await viewer.IFC.loadIfcUrl(url);
@@ -74,7 +95,8 @@ window.onclick = async () => await viewer.IFC.selector.pickIfcItem();
 window.onkeydown = async () => await viewer.IFC.selector.unpickIfcItems(); 
 
 window.onmousemove = async () => await viewer.IFC.selector.prePickIfcItem();
-window.oncontextmenu = async () => await viewer.IFC.selector.unpickIfcItems();
+// window.oncontextmenu = async () => await viewer.IFC.selector.unpickIfcItems();
+
 
 
 function createTreeMenu(ifcProject) {

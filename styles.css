@@ -6,7 +6,10 @@
   font-size: 1rem;
   color: var(--glow-color);
   font-weight: bold;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+
 }
 
 :root {
