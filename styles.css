@@ -64,14 +64,15 @@ ul, #myUL {
 }
 
 .caret::before {
-  content: '🎮';
+  content: '📁';
   color: var(--second-glow-color);
   display: inline-block;
   margin-right: 6px;
 }
 
 .caret-down::before {
-  transform: rotate(90deg);
+  content: '📂';
+  transform: rotate(30deg);
 }
 
 .nested {

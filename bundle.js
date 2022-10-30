@@ -123137,7 +123137,7 @@ viewer.axes.setAxes();
 const controls = viewer.context.ifcCamera.cameraControls;
 controls.setLookAt(35, 55, 55, 0, 0, -20, false);
 
-const treeRoot = document.getElementById("tree-root");
+// const treeRoot = document.getElementById("tree-root");
 const loading = document.getElementById("loader-container");
 const input = document.getElementById("file-input");
 input.addEventListener(
@@ -123147,7 +123147,7 @@ input.addEventListener(
     const ifcURL = URL.createObjectURL(changed.target.files[0]);
     await loadIfc(ifcURL);
     loading.classList.add("hidden");
-    treeRoot.classList.remove("hidden");
+    // treeRoot.classList.remove("hidden");
     // scene.add(model);
   },
   false
@@ -123177,9 +123177,8 @@ async function loadIfc(url) {
   await viewer.shadowDropper.renderShadow(model.modelID);
 
   const spatialTree = await viewer.IFC.getSpatialStructure(model.modelID);
-  createTreeMenu(spatialTree);
-}
-const selectMaterial = new MeshLambertMaterial({
+  createTreeMenu(spatialTree, model.modelID);
+}const selectMaterial = new MeshLambertMaterial({
   transparent: true,
   opacity: 0.8,
   color: 0x74b8ff,
@@ -123195,21 +123194,36 @@ const preSelectMaterial = new MeshLambertMaterial({
 });
 viewer.IFC.selector.preselection.material = preSelectMaterial;
 
-window.onclick = async () => await viewer.IFC.selector.pickIfcItem();
-window.onkeydown = async () => await viewer.IFC.selector.unpickIfcItems(); 
+window.onclick = async () => {
+  await viewer.IFC.selector.unpickIfcItems();
+  const result = await viewer.IFC.selector.pickIfcItem();
+  if (!result) return;
+  const { modelID, id } = result;
+  const props = await viewer.IFC.getProperties(modelID, id, true, false);
+  console.log(props);
+};
+
+window.onkeydown = async () => await viewer.IFC.selector.unHighlightIfcItems(); 
+window.ondblclick = async () => await viewer.IFC.selector.highlightIfcItem(true);
 
 window.onmousemove = async () => await viewer.IFC.selector.prePickIfcItem();
 // window.oncontextmenu = async () => await viewer.IFC.selector.unpickIfcItems();
 
 
 
-function createTreeMenu(ifcProject) {
+function createTreeMenu(ifcProject, modelID) {
   const root = document.getElementById("tree-root");
-  removeAllChildren(root);
-  const ifcProjectNode = createNestedChild(root, ifcProject);
+  const newTree = root.cloneNode(true);
+  newTree.id = "tree-root" + modelID;
+  removeAllChildren(newTree);
+  const ifcProjectNode = createNestedChild(newTree, ifcProject);
   ifcProject.children.forEach(child => {
       constructTreeMenuNode(ifcProjectNode, child);
   });
+  const myUL = document.getElementById("myUL");
+  myUL.append(newTree);
+  newTree.classList.remove("hidden");
+
 }
 
 function nodeToString(node) {
