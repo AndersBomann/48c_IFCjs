@@ -47,28 +47,24 @@ input.addEventListener(
   },
   false
 );
+
 const openButton = document.getElementsByClassName("openbtn")
 const closeButton = document.getElementsByClassName("clsoebtn")
-
 openButton.onclick = openNav();
 closeButton.onclick = closeNav();
-
 function openNav() {
   document.getElementById("mySidebar").style.width = "30%";
   document.getElementById("main").style.marginLeft = "250px";
   document.getElementById("main").classList.add("hidden");
 }
-
 function closeNav() {
   document.getElementById("mySidebar").style.width = "0";
   document.getElementById("main").style.marginLeft = "0";
   document.getElementById("main").classList.remove("hidden");
 }
 
-
-
 async function loadIfc(url) {
-  const model = await viewer.IFC.loadIfcUrl(url);
+  const model = await viewer.IFC.loadIfcUrl(url, true);
   await viewer.shadowDropper.renderShadow(model.modelID);
 
   const spatialTree = await viewer.IFC.getSpatialStructure(model.modelID);
@@ -112,13 +108,15 @@ function createTreeMenu(ifcProject, modelID) {
   const newTree = root.cloneNode(true);
   newTree.id = "tree-root" + modelID;
   removeAllChildren(newTree);
-  const ifcProjectNode = createNestedChild(newTree, ifcProject);
+  const projectName = document.getElementById("file-input").value.substring(12);
+  const ifcProjectNode = createNestedChild(newTree,ifcProject, projectName);
   ifcProject.children.forEach(child => {
       constructTreeMenuNode(ifcProjectNode, child);
   })
   const myUL = document.getElementById("myUL");
   myUL.append(newTree);
   newTree.classList.remove("hidden");
+  // newTree.getElementsByClassName("caret").textContent = "abc";
 
 }
 
@@ -138,8 +136,8 @@ function constructTreeMenuNode(parent, node) {
   })
 }
 
-function createNestedChild(parent, node) {
-  const content = nodeToString(node);
+function createNestedChild(parent, node, contentName) {
+  const content = contentName || nodeToString(node);
   const root = document.createElement('li');
   createTitle(root, content);
   const childrenContainer = document.createElement('ul');
