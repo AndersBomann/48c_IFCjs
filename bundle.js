@@ -123174,7 +123174,9 @@ async function loadIfc(url) {
 
   const spatialTree = await viewer.IFC.getSpatialStructure(model.modelID);
   createTreeMenu(spatialTree, model.modelID);
-}const selectMaterial = new MeshLambertMaterial({
+}
+//#region Materials
+const selectMaterial = new MeshLambertMaterial({
   transparent: true,
   opacity: 0.8,
   color: 0x74b8ff,
@@ -123189,24 +123191,31 @@ const preSelectMaterial = new MeshLambertMaterial({
   depthTest: false,
 });
 viewer.IFC.selector.preselection.material = preSelectMaterial;
+//#endregion
 
+//#region Navigation, Clicks etc.
 window.onclick = async () => {
-  await viewer.IFC.selector.unpickIfcItems();
-  const result = await viewer.IFC.selector.pickIfcItem();
+  viewer.IFC.selector.unpickIfcItems();
+  await viewer.IFC.selector.unHighlightIfcItems();
+  await viewer.IFC.selector.pickIfcItem();
+};
+
+window.onkeydown = async () => await viewer.IFC.selector.unHighlightIfcItems(); 
+window.ondblclick = async () => {
+  viewer.IFC.selector.unpickIfcItems();
+  const result = await viewer.IFC.selector.highlightIfcItem(true);
   if (!result) return;
   const { modelID, id } = result;
   const props = await viewer.IFC.getProperties(modelID, id, true, false);
   console.log(props);
-};
-
-window.onkeydown = async () => await viewer.IFC.selector.unHighlightIfcItems(); 
-window.ondblclick = async () => await viewer.IFC.selector.highlightIfcItem(true);
+  createPropertiesMenu(props);
+}; 
 
 window.onmousemove = async () => await viewer.IFC.selector.prePickIfcItem();
 // window.oncontextmenu = async () => await viewer.IFC.selector.unpickIfcItems();
+//#endregion
 
-
-
+//#region Model Structure Tree
 function createTreeMenu(ifcProject, modelID) {
   const root = document.getElementById("tree-root");
   const newTree = root.cloneNode(true);
@@ -123239,7 +123248,6 @@ function constructTreeMenuNode(parent, node) {
       constructTreeMenuNode(nodeElement, child);
   });
 }
-
 function createNestedChild(parent, node, contentName) {
   const content = contentName || nodeToString(node);
   const root = document.createElement('li');
@@ -123277,86 +123285,49 @@ function createSimpleChild(parent, node) {
       viewer.IFC.selector.pickIfcItemsByID(0, [node.expressID]);
   };
 }
+//#endregion
+
+//#region Properties Menu
+const propsGUI = document.getElementById("ifc-property-menu-root");
+
+function createPropertiesMenu(properties) {
+
+    removeAllChildren(propsGUI);
+
+    delete properties.psets;
+    delete properties.mats;
+    delete properties.type;
+
+
+    for (let key in properties) {
+        createPropertyEntry(key, properties[key]);
+    }
+
+}
+
+function createPropertyEntry(key, value) {
+    const propContainer = document.createElement("div");
+    propContainer.classList.add("ifc-property-item");
+
+    if(value === null || value === undefined) value = "undefined";
+    else if(value.value) value = value.value;
+
+    const keyElement = document.createElement("div");
+    keyElement.textContent = key;
+    propContainer.appendChild(keyElement);
+
+    const valueElement = document.createElement("div");
+    valueElement.classList.add("ifc-property-value");
+    valueElement.textContent = value;
+    propContainer.appendChild(valueElement);
+
+    propsGUI.appendChild(propContainer);
+}
+
+//#endregion
 
 function removeAllChildren(element) {
   while (element.firstChild) {
       element.removeChild(element.firstChild);
   }
 }
-// //Creates the Three.js scene
-// const scene = new Scene();
-
-// //Object to store the size of the viewport
-// const size = {
-//     width: window.innerWidth,
-//     height: window.innerHeight,
-// };
-
-// //Creates the camera (point of view of the user)
-// const camera = new PerspectiveCamera(75, size.width / size.height);
-// camera.position.z = 15;
-// camera.position.y = 13;
-// camera.position.x = 8;
-
-// //Creates the lights of the scene
-// const lightColor = 0xffffff;
-
-// const ambientLight = new AmbientLight(lightColor, 0.5);
-// scene.add(ambientLight);
-
-// const directionalLight = new DirectionalLight(lightColor, 1);
-// directionalLight.position.set(0, 10, 0);
-// directionalLight.target.position.set(-5, 0, 0);
-// scene.add(directionalLight);
-// scene.add(directionalLight.target);
-
-// //Sets up the renderer, fetching the canvas of the HTML
-// const threeCanvas = document.getElementById("three-canvas");
-// const renderer = new WebGLRenderer({canvas: threeCanvas, alpha: true});
-// renderer.setSize(size.width, size.height);
-// renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-// //Creates grids and axes in the scene
-// const grid = new GridHelper(50, 30);
-// scene.add(grid);
-
-// const axes = new AxesHelper();
-// axes.material.depthTest = false;
-// axes.renderOrder = 1;
-// scene.add(axes);
-
-// //Creates the orbit controls (to navigate the scene)
-// const controls = new OrbitControls(camera, threeCanvas);
-// controls.enableDamping = true;
-// controls.target.set(-2, 0, 0);
-
-// //Animation loop
-// const animate = () => {
-//     controls.update();
-//     renderer.render(scene, camera);
-//     requestAnimationFrame(animate);
-// };
-
-// animate();
-
-// //Adjust the viewport to the size of the browser
-// window.addEventListener("resize", () => {
-//     (size.width = window.innerWidth), (size.height = window.innerHeight);
-//     camera.aspect = size.width / size.height;
-//     camera.updateProjectionMatrix();
-//     renderer.setSize(size.width, size.height);
-// });
-
-// //Sets up the IFC loading
-// const ifcLoader = new IFCLoader();
-
-// const input = document.getElementById("file-input");
-// input.addEventListener(
-//     "change",
-//     async (changed) => {
-//         const ifcURL = URL.createObjectURL(changed.target.files[0]);
-//         const model = await ifcLoader.loadAsync(ifcURL);
-//         scene.add(model);
-//     },
-//     false
-// );
