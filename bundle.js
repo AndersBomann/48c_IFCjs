@@ -123210,6 +123210,16 @@ window.ondblclick = async () => {
   console.log(props);
   createPropertiesMenu(props);
 }; 
+viewer.clipper.active = true;
+viewer.clipper.planeSize = 1;
+window.onkeydown = (event) => {
+    if(event.code === 'KeyP') {
+        viewer.clipper.createPlane();
+    }
+    else if(event.code === 'KeyO') {
+        viewer.clipper.deletePlane();
+    }
+};
 
 window.onmousemove = async () => await viewer.IFC.selector.prePickIfcItem();
 // window.oncontextmenu = async () => await viewer.IFC.selector.unpickIfcItems();
